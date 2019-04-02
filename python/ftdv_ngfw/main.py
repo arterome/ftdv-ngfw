@@ -791,6 +791,23 @@ class NGFWBasicService(Service):
     #     finally:
     #         output.result = result
 
+class ITDService(Service):
+
+    @Service.create
+    def cb_create(self, tctx, root, service, proplist):
+        self.log.info('Service create(service=', service._path, ')')
+
+        vars = ncs.template.Variables()
+        template = ncs.template.Template(service)
+
+        vars.add('NODE-IP-ADDRESS', service.side_a.device_ip_address)
+        #...
+        template.apply('', vars)
+        vars.add('NODE-IP-ADDRESS', service.side_b.device_ip_address)
+        #...
+        template.apply('', vars)
+
+
 
 # ---------------------------------------------
 # COMPONENT THREAD THAT WILL BE STARTED BY NCS.
@@ -806,6 +823,7 @@ class Main(ncs.application.Application):
         #
         self.register_service('ftdv-ngfw-servicepoint', NGFWBasicService)
         self.register_service('ftdv-ngfw-advanced-servicepoint', NGFWAdvancedService)
+        self.register_service('ftdv-itd-servicepoint', ITDService)
         self.register_service('ftdv-ngfw-scalable-servicepoint', ScalableService)
         self.register_action('ftdv-ngfw-getDeviceData-action', GetDeviceData)
         self.register_action('ftdv-ngfw-addUser-action', AddDeviceUser)

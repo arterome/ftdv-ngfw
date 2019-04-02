@@ -442,11 +442,32 @@ module ftdv-ngfw {
       uses state-grouping;
       uses access-rule-grouping;
     }
-
-
   }
 
+  grouping itd-side {
+      leaf device-ip-address;
+      leaf from-interface;
+  }
+  grouping itd-ifra {
+      list switches
+  }
 
+  list intelligent-traffic-director {
+    key name;
+    leaf name {
+      type string;
+    }
+    uses ncs:service-data;
+    ncs:servicepoint ftdv-itd-servicepoint;
 
-
+    container infra {
+      uses itd-ifra
+    }
+    container side-a {
+      uses itd-side
+    }
+    container side-a {
+      uses itd-side
+    }
+  }
 }
